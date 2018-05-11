@@ -19,11 +19,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 public abstract class RedisCommonDao<K extends MyRedisEntity> {
 
 	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
+	protected RedisTemplate<String, Object> redisTemplate;
 	
 	private String _key;
 	
-	private HashOperations<String, String, K> hashOperations;
+	protected HashOperations<String, String, K> hashOperations;
 	
 	@PostConstruct
 	private void init() {
@@ -31,23 +31,24 @@ public abstract class RedisCommonDao<K extends MyRedisEntity> {
 	}
 	
 	public void save(K redisEntity) {
-		hashOperations.put(_key, redisEntity.getId(), redisEntity);
+		String id = DataManager.getDataHolder() == null ? "master" : DataManager.getDataHolder().getTanentId().equalsIgnoreCase("master") ? redisEntity.getId() : "master";
+		hashOperations.put(_key+"-"+id, id , redisEntity);
 	}
 	
 	public K findOne(String id) {
-		return hashOperations.get(_key, id);
+		return hashOperations.get(_key+"-"+DataManager.getDataHolder().getTanentId(), id);
 	}
 	
 	public Map<String, K> findAll(){
-		return hashOperations.entries(_key);
+		return hashOperations.entries(_key+"-"+DataManager.getDataHolder().getTanentId());
 	}
 	
 	public void update(K myRedisEntity) {
-		hashOperations.put(_key, myRedisEntity.getId(), myRedisEntity);
+		hashOperations.put(_key+"-"+DataManager.getDataHolder().getTanentId(), myRedisEntity.getId(), myRedisEntity);
 	}
 	
 	public void delete(String id) {
-		hashOperations.delete(_key, id);
+		hashOperations.delete(_key+"-"+DataManager.getDataHolder().getTanentId(), id);
 	}
 	
 	

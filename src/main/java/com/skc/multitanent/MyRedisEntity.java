@@ -3,12 +3,18 @@
  */
 package com.skc.multitanent;
 
+import java.io.Serializable;
+
 /**
  * @author chaudhsi
  *
  */
-public abstract class MyRedisEntity {
+public abstract class MyRedisEntity implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String id;
 
 	/**

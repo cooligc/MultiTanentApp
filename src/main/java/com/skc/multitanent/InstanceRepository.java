@@ -35,6 +35,10 @@ public class InstanceRepository extends RedisCommonDao<Instance>{
 		return super.findOne(id);
 	}
 	
+	public Instance findByName(String name) {
+		return hashOperations.get(KEY, name);
+	}
+	
 	@Override
 	public void delete(String id) {
 		super.delete(id);

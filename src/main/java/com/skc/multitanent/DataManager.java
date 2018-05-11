@@ -9,14 +9,14 @@ package com.skc.multitanent;
  */
 public class DataManager {
 	
-	private static ThreadLocal<DataHolder> dataHolder;
+	//TODO Need to optimize object creation
+	private static ThreadLocal<DataHolder> dataHolder = new ThreadLocal<DataHolder>();
 	
 	public static void setDataHolder(ThreadLocal<DataHolder> dataHolder) {
 		DataManager.dataHolder = dataHolder;
 	}
 	
-	public static DataHolder getDataHolder(ThreadLocal<DataHolder> dataHolder) {
-		DataManager.dataHolder = dataHolder;
+	public static DataHolder getDataHolder() {
 		return DataManager.dataHolder.get();
 	}
 	

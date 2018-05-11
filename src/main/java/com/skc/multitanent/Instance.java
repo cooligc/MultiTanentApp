@@ -6,6 +6,9 @@ package com.skc.multitanent;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author sitakant
  *
@@ -20,9 +23,13 @@ public class Instance extends MyRedisEntity implements Serializable {
 	private String instanceId;
 	private String tanentId;
 	private Boolean isActive;
+	
 	private Date createdDate;
 	private Date lastUpdatedDate;
 	private String lastAccessBy;
+	
+	@NotBlank(message = "Instance Name Should not be blank")
+	private String name;
 	/**
 	 * @return the instanceId
 	 */
@@ -95,7 +102,26 @@ public class Instance extends MyRedisEntity implements Serializable {
 	public void setLastAccessBy(String lastAccessBy) {
 		this.lastAccessBy = lastAccessBy;
 	}
+
 	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+
+
+
 	static class InstanceBuilder {
 		private static Instance instance;
 		private InstanceBuilder() {
@@ -103,6 +129,11 @@ public class Instance extends MyRedisEntity implements Serializable {
 		}
 		
 		public static InstanceBuilder init() {
+			return new InstanceBuilder();
+		}
+		
+		public static InstanceBuilder init(Instance instance) {
+			InstanceBuilder.instance = instance;
 			return new InstanceBuilder();
 		}
 		
@@ -123,6 +154,10 @@ public class Instance extends MyRedisEntity implements Serializable {
 		
 		public InstanceBuilder withStatus(Boolean status) {
 			instance.setIsActive(status);
+			return this;
+		}
+		public InstanceBuilder withName(String name) {
+			instance.setName(name);
 			return this;
 		}
 		

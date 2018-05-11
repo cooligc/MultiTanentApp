@@ -21,6 +21,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Component
 public class MultitanentInterceptor extends HandlerInterceptorAdapter {
 	
+	private static final String INSTANCES = "instances";
+	private static final String MASTER = "master";
 	private static final String MULTI_TANENT_HEADER="X-Tanent-Id";
 	private ThreadLocal<DataHolder> _currentData = new ThreadLocal<DataHolder>();
 	
@@ -33,7 +35,12 @@ public class MultitanentInterceptor extends HandlerInterceptorAdapter {
 		
 		String tanentId = request.getHeader(MULTI_TANENT_HEADER);
 		if(tanentId == null) {
-			tanentId = "master";
+			tanentId = MASTER;
+		}
+		
+		if(checkResponse(request,tanentId)) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Requested resource cannot be accessed with this tanent="+tanentId);
+			return false;
 		}
 		
 		DataHolder dataHolder = new DataHolder();
@@ -47,9 +54,25 @@ public class MultitanentInterceptor extends HandlerInterceptorAdapter {
 		return super.preHandle(request, response, handler);
 	}
 	
+	private boolean checkResponse(HttpServletRequest request,String tanentId) {
+		String requestPath = request.getRequestURI();
+		
+		//TODO RBAC Can be implemented here to check the user is authorized to resource or not
+		if(requestPath.contains(INSTANCES) && !tanentId.equalsIgnoreCase(MASTER)) {
+			return true;
+		}
+		
+		if(!requestPath.contains(INSTANCES) && tanentId.equalsIgnoreCase(MASTER)) {
+			return true;
+		}
+		
+		return false;
+	}
+
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
+		response.setHeader(MULTI_TANENT_HEADER, DataManager.getDataHolder().getTanentId());
 		DataManager.clean();
 		super.postHandle(request, response, handler, modelAndView);
 	}

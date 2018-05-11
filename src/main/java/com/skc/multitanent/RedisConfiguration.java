@@ -19,6 +19,10 @@ public class RedisConfiguration {
 	    JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
 	    jedisConFactory.setHostName("10.41.37.40");
 	    jedisConFactory.setPort(6379);
+	    /*jedisConFactory.setHostName("redis-18859.c16.us-east-1-3.ec2.cloud.redislabs.com");
+	    jedisConFactory.setPort(18859);
+	    
+	    jedisConFactory.setPassword("JMitsBl4WpRuSPpK51vKiYnUWCCzjKKX");*/
 	    return jedisConFactory;
 	}
 	
